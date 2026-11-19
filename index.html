@@ -87,8 +87,8 @@
     <h1>Cadence</h1>
     <p class="tagline">Privacy-focused delayed auditory feedback for Android</p>
     <p class="lead">Cadence plays your own voice back to you through wired earbuds, a fraction of a second late. Practise on the go, anywhere.</p>
-    <a class="btn" href="https://github.com/cadence-daf/cadence/releases/download/v0.3.0/cadence-0.3.0.apk" download>Download the APK (v0.3.0)</a>
-    <p class="meta">Android 8.0 or newer · 7.4 MB · <a href="https://github.com/cadence-daf/cadence/releases/tag/v0.3.0">release notes</a></p>
+    <a class="btn" id="dl" href="https://github.com/cadence-daf/cadence/releases/download/v0.4.0/cadence-0.4.0.apk" download>Download the APK (v0.4.0)</a>
+    <p class="meta">Android 8.0 or newer · <span id="size">7.4 MB</span> · <a id="notes" href="https://github.com/cadence-daf/cadence/releases/tag/v0.4.0">release notes</a></p>
   </header>
 
   <section>
@@ -143,8 +143,8 @@
       <li>Open the file. If Android asks, allow installs from your browser or file manager.</li>
       <li>Tap Install, then open Cadence.</li>
     </ol>
-    <p class="meta">Checksum (SHA-256) of cadence-0.3.0.apk:</p>
-    <p class="digest"><code>b61a9d5b25fa4fe44fc3e2373dc2724ab0badbec242a2f4818e12d1260c774f3</code></p>
+    <p class="meta">Checksum (SHA-256) of <span id="sumname">cadence-0.4.0.apk</span>:</p>
+    <p class="digest"><code id="sum">8dec3431c31dcf7942ac6817c2ddf60a1238a23f7fd8673053a02e2e69732bfd</code></p>
   </section>
 
   <section>
@@ -156,7 +156,25 @@
 </main>
 <footer>
   <p>This page has no analytics, no cookies and no trackers either.</p>
-  <p><a href="https://github.com/cadence-daf/cadence">Source on GitHub</a></p>
+  <p><a href="https://github.com/cadence-daf/cadence/blob/main/PRIVACY.md">Privacy policy</a> · <a href="https://github.com/cadence-daf/cadence/blob/main/LICENSE">License (GPL-3.0)</a> · <a href="https://github.com/cadence-daf/cadence/issues">Report an issue</a> · <a href="https://github.com/cadence-daf/cadence">Source on GitHub</a></p>
 </footer>
+<script>
+// Fills the download button, size, notes link and checksum from the latest GitHub release.
+// If the request fails, the values already in the page (the last release at publish time) stay.
+fetch("https://api.github.com/repos/cadence-daf/cadence/releases/latest")
+  .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+  .then(function (rel) {
+    var a = rel.assets.filter(function (x) { return /\.apk$/.test(x.name); })[0];
+    if (!a) return;
+    var dl = document.getElementById("dl");
+    dl.href = a.browser_download_url;
+    dl.textContent = "Download the APK (" + rel.tag_name + ")";
+    document.getElementById("size").textContent = (a.size / 1048576).toFixed(1) + " MB";
+    document.getElementById("notes").href = rel.html_url;
+    document.getElementById("sumname").textContent = a.name;
+    document.getElementById("sum").textContent = a.digest ? a.digest.replace("sha256:", "") : "See the release page";
+  })
+  .catch(function () {});
+</script>
 </body>
 </html>
